@@ -16,7 +16,7 @@
   <tbody>
     <% @entries.each do |entry| %>
       <tr>
-        <td><%= entry.activity_name %></td>
+        <td><%= entry.activity.name %></td>
         <td><%= entry.score %></td>
         <td><%= entry.hours %></td>
         <td><%= entry.date %></td>

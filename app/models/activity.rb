@@ -1,11 +1,13 @@
 class Activity < ActiveRecord::Base
 
-    validates :name, uniqueness: true
+    validates :name, uniqueness: true, presence: true
 
-    has_many :entry
+    has_many :entries
 
-    before_save do |activity| 
-        activity.name = activity.name.downcase 
+    before_save :downcase_name
+
+    def downcase_name
+        name = name.to_s.downcase
     end
 
 end
