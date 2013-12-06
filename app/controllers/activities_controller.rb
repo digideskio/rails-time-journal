@@ -1,10 +1,12 @@
 class ActivitiesController < ApplicationController
+  before_filter :authenticate_user!
   before_action :set_activity, only: [:show, :edit, :update, :destroy]
+  before_action :check_user, only: [:show, :edit, :update, :destroy]
 
   # GET /activities
   # GET /activities.json
   def index
-    @activities = Activity.all
+    @activities = current_user.activities
   end
 
   # GET /activities/1
@@ -14,7 +16,7 @@ class ActivitiesController < ApplicationController
 
   # GET /activities/new
   def new
-    @activity = Activity.new
+    @activity = current_user.activities.new
   end
 
   # GET /activities/1/edit
@@ -24,7 +26,7 @@ class ActivitiesController < ApplicationController
   # POST /activities
   # POST /activities.json
   def create
-    @activity = Activity.new(activity_params)
+    @activity = current_user.activities.new(activity_params)
 
     respond_to do |format|
       if @activity.save
@@ -64,11 +66,17 @@ class ActivitiesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_activity
-      @activity = Activity.find(params[:id])
+      @activity = current_user.activities.find_by_id(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def activity_params
       params.require(:activity).permit(:name, :notes)
+    end
+
+    def check_user
+      if @activity.user_id != current_user.id
+        render :text => 'Unauthorised', :status => 403
+      end
     end
 end

@@ -1,13 +1,15 @@
 class EntriesController < ApplicationController
+  before_filter :authenticate_user!
   before_action :set_entry, only: [:show, :edit, :update, :destroy]
+  #before_action :check_user, only: [:show, :edit, :update, :destroy]
 
   # GET /entries
   # GET /entries.json
   def index
     if params[:date]
-      @entries = Entry.where(:date => params[:date])
+      @entries = current_user.entries.where(:user_id => current_user.id, :date => params[:date])
     else
-      @entries = Entry.all
+      @entries = current_user.entries
     end
   end
 
@@ -18,7 +20,7 @@ class EntriesController < ApplicationController
 
   # GET /entries/new
   def new
-    @entry = Entry.new
+    @entry = current_user.entries.new
   end
 
   # GET /entries/1/edit
@@ -28,7 +30,7 @@ class EntriesController < ApplicationController
   # POST /entries
   # POST /entries.json
   def create
-    @entry = Entry.new(entry_params)
+    @entry = current_user.entries.new(entry_params) 
 
     respond_to do |format|
       if @entry.save
@@ -68,11 +70,18 @@ class EntriesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_entry
-      @entry = Entry.find(params[:id])
+      #@entry = Entry.find(params[:id])
+      @entry = current_user.entries.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def entry_params
       params.require(:entry).permit(:activity_name, :score, :hours, :date)
+    end
+
+    def check_user
+      if @entry.user_id != current_user.id
+        render :text => 'Unauthorised', :status => 403
+      end
     end
 end

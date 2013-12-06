@@ -27,7 +27,12 @@ gem 'turbolinks'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
 
+# For creating fake data in db.seed etc
 gem 'faker'
+
+gem 'devise'
+
+gem 'better_errors'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

@@ -1,7 +1,9 @@
 Tj1::Application.routes.draw do
-  resources :activities
-
   root "start#index"
+
+  devise_for :users
+
+  resources :activities
   resources :days
   resources :entries
 

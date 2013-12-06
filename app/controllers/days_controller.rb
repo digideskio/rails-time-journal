@@ -1,5 +1,7 @@
 class DaysController < ApplicationController
+  before_filter :authenticate_user!
   before_action :set_day, only: [:show, :edit, :update, :destroy]
+  before_action :check_user, only: [:show, :edit, :update, :destroy]
 
   # GET /days
   # GET /days.json
@@ -64,11 +66,17 @@ class DaysController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_day
-      @day = Day.find(params[:id])
+      @day = current_user.days.find_by_id(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def day_params
       params.require(:day).permit(:date, :score, :notes)
+    end
+
+    def check_user
+      if @day.user_id != current_user.id
+        render :text => 'Unauthorised', :status => 403
+      end
     end
 end
